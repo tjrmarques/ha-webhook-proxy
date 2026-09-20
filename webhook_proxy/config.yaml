@@ -1,0 +1,18 @@
+name: "Webhook Proxy"
+version: "0.1.0"
+slug: "webhook_proxy"
+description: "Only exposes specific webhook IDs to the internet"
+url: "https://github.com/tjrmarques/ha-webhook-proxy"
+arch:
+  - amd64
+  - aarch64
+init: false
+image: "ghcr.io/tjrmarques/ha-webhook-proxy-{arch}"
+ports:
+  8181/tcp: 8181
+ports_description:
+  8181/tcp: "Webhook proxy listener"
+options:
+  allowed_webhook_ids: []
+schema:
+  allowed_webhook_ids: ["str"]
