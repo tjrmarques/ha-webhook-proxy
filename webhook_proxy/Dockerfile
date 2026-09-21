@@ -2,8 +2,9 @@ ARG BUILD_FROM
 
 FROM --platform=$BUILDPLATFORM ghcr.io/rust-cross/rust-musl-cross:x86_64-musl AS builder-amd64
 FROM --platform=$BUILDPLATFORM ghcr.io/rust-cross/rust-musl-cross:aarch64-musl AS builder-arm64
+FROM --platform=$BUILDPLATFORM ghcr.io/rust-cross/rust-musl-cross:armv7-musleabihf AS builder-armv7
 
-FROM builder-${TARGETARCH} AS builder
+FROM builder-${TARGETARCH}${TARGETVARIANT} AS builder
 WORKDIR /build
 COPY Cargo.toml ./
 COPY src ./src

@@ -23,6 +23,9 @@ jobs:
           - arch: aarch64
             platform: linux/arm64
             build_from: ghcr.io/home-assistant/aarch64-base:3.19
+          - arch: armv7
+            platform: linux/arm/v7
+            build_from: ghcr.io/home-assistant/armv7-base:3.19
 
     steps:
       - name: Check out repository
