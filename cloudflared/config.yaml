@@ -1,0 +1,15 @@
+name: "Cloudflared Tunnel"
+version: "0.1.0"
+slug: "cloudflared_tunnel"
+description: "Runs a Cloudflare Tunnel from a tunnel token. Ingress rules (which hostname maps to which local service) are configured remotely in the Cloudflare dashboard, not here."
+url: "https://github.com/tjrmarques/ha-webhook-proxy"
+arch:
+  - amd64
+  - aarch64
+  - armv7
+init: false
+image: "ghcr.io/tjrmarques/ha-cloudflared-{arch}"
+options:
+  tunnel_token: ""
+schema:
+  tunnel_token: "password"

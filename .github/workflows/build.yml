@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "webhook_proxy/**"
+      - "cloudflared/**"
       - ".github/workflows/build.yml"
   workflow_dispatch: {}
 
@@ -16,7 +17,12 @@ jobs:
       packages: write
     strategy:
       matrix:
-        include:
+        component:
+          - name: webhook_proxy
+            image: webhook-proxy
+          - name: cloudflared
+            image: ha-cloudflared
+        arch_info:
           - arch: amd64
             platform: linux/amd64
             build_from: ghcr.io/home-assistant/amd64-base:3.19
@@ -31,10 +37,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Read add-on version
+      - name: Read app version
         id: version
         run: |
-          VERSION=$(grep '^version:' webhook_proxy/config.yaml | sed 's/version: *"\(.*\)"/\1/')
+          VERSION=$(grep '^version:' "${{ matrix.component.name }}/config.yaml" | sed 's/version: *"\(.*\)"/\1/')
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Set up QEMU
@@ -53,11 +59,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./webhook_proxy
-          platforms: ${{ matrix.platform }}
+          context: ./${{ matrix.component.name }}
+          platforms: ${{ matrix.arch_info.platform }}
           build-args: |
-            BUILD_FROM=${{ matrix.build_from }}
+            BUILD_FROM=${{ matrix.arch_info.build_from }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/ha-webhook-proxy-${{ matrix.arch }}:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository_owner }}/ha-webhook-proxy-${{ matrix.arch }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component.image }}-${{ matrix.arch_info.arch }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.component.image }}-${{ matrix.arch_info.arch }}:latest
